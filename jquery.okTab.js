@@ -1,7 +1,7 @@
 /*
  *	Name:		Ok Tab Switcher
- *	Author: 	Mitchell Petty
- *	Version: 	1.2
+ *	Author: 	Mitchell Petty <https://github.com/mpetty/ok-tab>
+ *	Version: 	v1.2
  */
 (function($) {
 "use strict";

@@ -14,14 +14,30 @@
 		// Set properties
 		this.selector = $(selector);
 		this.settings = settings;
-		this.$tabContent = $('.' + this.settings.tabContentClass, this.selector);
-		this.$tabNav = [$('.' + this.settings.tabNavClass, this.selector)];
-		this.$secondaryNav = $(this.settings.connectedTabNav);
+		this.tabName = null;
+		this.tabsViewed = [];
+
+		// Store elements
+		this.el = {};
+		this.el.tabContent = $('.' + this.settings.tabContentClass, this.selector);
+		this.el.primaryNav = $('.' + this.settings.tabNavClass, this.selector);
+		this.el.secondaryNav = $(this.settings.connectedTabNav);
+		this.el.tabs = $("> div, > .tab", this.el.tabContent);
+		this.el.curTab = null;
+		this.el.prevTab = null;
+		this.el.tabNav = [];
+
+		// Build array of all primaryNav navs
+		if(this.el.primaryNav.length) {
+			this.el.primaryNav.each(function() {
+				self.el.tabNav.push($(this));
+			});
+		}
 
 		// Build array of all secondary navs
-		if(this.$secondaryNav.length) {
-			this.$secondaryNav.each(function() {
-				self.$tabNav.push($(this));
+		if(this.el.secondaryNav.length) {
+			this.el.secondaryNav.each(function() {
+				self.el.tabNav.push($(this));
 			});
 		}
 
@@ -37,10 +53,13 @@
 		 */
 		Initialize : function() {
 
-			// Event listeners
-			for(var value in this.$tabNav) {
-				$('a', this.$tabNav[value]).off('.okTab').on('click.okTab', $.proxy(this.activate,this));
+			// Tab nav
+			for(var value in this.el.tabNav) {
+				$('a', this.el.tabNav[value]).off('.okTab').on('click.okTab', $.proxy(this.activate,this));
 			}
+
+			// Next/Prev links
+			$("[" + this.settings.tabDataLink + "]", this.el.tabContent).off(".okTab").on("click.okTab", $.proxy(this.activate, this));
 
 			// Build it
 			this.build.call(this);
@@ -52,39 +71,84 @@
 		 */
 		build : function() {
 
+			var self = this;
+
 			// Set active tab
-			if( $('.'+this.settings.activeClass, this.$tabContent).length ) {
-				$('> div, > .tab', this.$tabContent).not($('.'+this.settings.activeClass, this.$tabContent)).hide();
+			if( $('.'+this.settings.activeClass, this.el.tabContent).length ) {
+				this.el.curTab = this.el.tabs.filter("." + this.settings.activeClass);
+				this.el.tabs.not(this.el.curTab).hide();
 			} else {
-				$('> div:first, > .tab:first', this.$tabContent).addClass(this.settings.activeClass);
-				$('> div, > .tab', this.$tabContent).not(':first').hide();
+				this.el.curTab = this.el.tabs.first();
+				this.el.curTab.addClass(this.settings.activeClass);
+				this.el.tabs.not(":first").hide();
 			}
 
 			// Set tab nav names
-			for(var value in this.$tabNav) {
-				if( ! $('.'+this.settings.activeClass, this.$tabNav[value]).length ) {
-					$('li:first', this.$tabNav[value]).addClass(this.settings.activeClass);
+			for(var value in this.el.tabNav) {
+				if( ! $('.'+this.settings.activeClass, this.el.tabNav[value]).length ) {
+					$('li:first', this.el.tabNav[value]).addClass(this.settings.activeClass);
 				}
 
-				$('a', this.$tabNav[value]).each(function(i) {
+				$('a', this.el.tabNav[value]).each(function(i) {
 					var url = $(this).attr('href');
 
 					if( url.indexOf("#") != -1 && url.length >= 2 ) {
 						$(this).attr("data-tabname", $(this).attr('href').replace('#', ''));
+
+						if ($(this).parent().hasClass(self.settings.activeClass)) {
+							self.tabName = $(this).attr("href").replace("#", "");
+						}
 					} else {
 						$(this).attr("data-tabname", i + 1);
+
+						if ($(this).parent().hasClass(self.settings.activeClass)) {
+							self.tabName = i + 1
+						}
 					}
 				});
 			}
 
 			// Set tab names
-			$('> div, > .tab', this.$tabContent).each(function(i) {
+			$('> div, > .tab', this.el.tabContent).each(function(i) {
 				var id = $(this).attr('id');
 
 				if( typeof id !== 'undefined' && id.length ) {
 					$(this).attr("data-tabname", $(this).attr('id'));
 				} else {
 					$(this).attr("data-tabname", i + 1);
+				}
+			});
+
+			// Buttons
+			this.el.tabs.each(function (j) {
+				var tabLink = $("[" + self.settings.tabDataLink + "]", $(this)),
+					nextLink = $(this).next(),
+					prevLink = $(this).prev();
+
+				if(!tabLink.length) return;
+
+				for (var i = tabLink.length - 1; i >= 0; i--) {
+					var url = $(tabLink[i]).attr("href");
+
+					if (url.indexOf("#") != -1) {
+						$(tabLink[i]).attr("data-tabname", $(tabLink[i]).attr("href").replace("#", ""))
+					} else {
+						if ($(tabLink[i]).attr(self.settings.tabDataLink) === "next") {
+							if (nextLink.length) {
+								$(tabLink[i]).attr("data-tabname", nextLink.attr("data-tabname"))
+							} else {
+								$(tabLink[i]).attr("data-tabname", self.el.tabs.first())
+							}
+						} else {
+							if ($(tabLink[i]).attr(self.settings.tabDataLink) === "prev") {
+								if (prevLink.length) {
+									$(tabLink[i]).attr("data-tabname", prevLink.attr("data-tabname"))
+								} else {
+									$(tabLink[i]).attr("data-tabname", self.el.tabs.last())
+								}
+							}
+						}
+					}
 				}
 			});
 
@@ -100,38 +164,53 @@
 			// Define vars
 			var self = this,
 				$this = $(e.currentTarget),
-				$curTab = $('.'+self.settings.activeClass, self.$tabNav[0]).children().attr('data-tabname'),
-				curTabHeight = self.$tabContent.height(),
+				curTab = $('.'+self.settings.activeClass, self.el.tabNav[0]).children().attr('data-tabname'),
+				curTabHeight = self.el.tabContent.height(),
 				tabName = $this.attr('data-tabname'),
-				newHeight = false;
+				prevTab = $("> [data-tabname=" + curTab + "]", self.el.tabContent),
+				nextTab = $("> [data-tabname=" + tabName + "]", self.el.tabContent),
+				newHeight = null;
 
 			// Prevent default
 			e.preventDefault();
 			e.stopPropagation();
 
 			// Continue only if not animating
-			if( self.$tabContent.find(":animated").length == 0 && $curTab != tabName ) {
+			if( self.el.tabContent.find(":animated").length == 0 && curTab != tabName ) {
 
-				// Loop each tab nav
-				for(var value in this.$tabNav) {
-					$('li', this.$tabNav[value]).removeClass(self.settings.activeClass);
-					this.$tabNav[value].find('[data-tabname="'+tabName+'"]').parent().addClass(self.settings.activeClass);
-				}
+				// Before callback
+				self.settings.beforeTabSwitch.call(self);
+
+				// Set tab name
+				self.tabName = tabName;
 
 				// Toggle active tab
-				$('> div', self.$tabContent).removeClass(self.settings.activeClass);
+				$("li", self.el.tabNav).removeClass(self.settings.activeClass);
+				self.el.tabs.removeClass(self.settings.activeClass);
+				self.el.prevTab = prevTab;
+
+				// Loop each tab nav
+				for(var value in this.el.tabNav) {
+					$('li', this.el.tabNav[value]).removeClass(self.settings.activeClass);
+					this.el.tabNav[value].find('[data-tabname="'+tabName+'"]').parent().addClass(self.settings.activeClass);
+				}
 
 				// Animate
-				$('[data-tabname='+$curTab+']', self.$tabContent).animate({'opacity':'hide'}, self.settings.animSpeed, function() {
+				prevTab.animate({'opacity':'hide'}, self.settings.animSpeed, function() {
 
-					newHeight = $('> div[data-tabname='+tabName+']', self.$tabContent).outerHeight(true);
+					newHeight = $('> div[data-tabname='+tabName+']', self.el.tabContent).outerHeight(true);
 
-					$('> div[data-tabname='+tabName+']', self.$tabContent).animate({'opacity':'show'}, self.settings.animSpeed).addClass(self.settings.activeClass);
+					self.el.tabContent.height(curTabHeight);
 
-					self.$tabContent.height(curTabHeight);
+					nextTab.animate({'opacity':'show'}, self.settings.animSpeed, function() {
+						$(this).addClass(self.settings.activeClass);
+						self.settings.afterTabSwitch.call(self);
+						self.tabsViewed.push(tabName);
+						self.el.curTab = $(this);
+					});
 
-					self.$tabContent.animate({'height':newHeight}, self.settings.animSpeed, function() {
-						self.$tabContent.css({'height':'auto'});
+					self.el.tabContent.animate({'height':newHeight}, self.settings.animSpeed, function() {
+						self.el.tabContent.css({'height':'auto'});
 					});
 
 				});
@@ -172,12 +251,15 @@
 	 *	Plugin Defaults
 	 */
 	$.fn.okTab.defaults = {
+		tabDataLink 			: "data-tabs-link",	// Tab link
 		tabDataAttr				: 'data-tabs',		// Used to init tabs when initialized on document
 		tabNavClass 			: 'tabs',			// Tab Nav ID/Class
 		tabContentClass 		: 'tabs-content',	// Tab Content ID / Class
 		activeClass 			: 'active',			// Tab Active Class
 		animSpeed 				: 200,				// Animation Speed
-		connectedTabNav			: '.tab-nav'			// Used to place tab nav outside of container
+		connectedTabNav			: '.tab-nav',		// Used to place tab nav outside of container
+		beforeTabSwitch			: $.noop,
+		afterTabSwitch			: $.noop
 	};
 
 })(jQuery);

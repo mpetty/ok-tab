@@ -1,2 +1,2 @@
-# Ok Tabs v1.2
+# Ok Tabs v1.3
 

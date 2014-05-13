@@ -11,7 +11,7 @@
 	<script type='text/javascript' src='../jquery.okTab.js'></script>
 	<script type='text/javascript'>
 		$(document).ready(function(){
-			$('.tab-container').okTab({
+			$(document).okTab({
 				tabNavClass : 'tab-nav',
 				tabContentClass : 'tab-content',
 				activeClass : 'active',
@@ -23,8 +23,16 @@
 
 <body>
 	<div class="inside">
+		<div class="secondary-tab-nav" data-tabnav="tab1">
+			<ul>
+				<li><a href="#">Tab 1</a></li>
+				<li><a href="#">Tab 2</a></li>
+				<li><a href="#">Tab 3</a></li>
+				<li><a href="#">Tab 4</a></li>
+			</ul>
+		</div>
 
-		<div class="tab-container">
+		<div class="tab-container" data-tabs="tab1">
 			<div class="tab-nav">
 				<ul>
 					<li><a href="#">Tab 1</a></li>

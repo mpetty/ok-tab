@@ -25,6 +25,7 @@
 		this.el.tabs = $("> div, > .tab", this.el.tabContent);
 		this.el.curTab = null;
 		this.el.prevTab = null;
+		this.el.nextTab = null;
 		this.el.tabNav = [];
 
 		// Build array of all primaryNav navs
@@ -177,6 +178,9 @@
 
 			// Continue only if not animating
 			if( self.el.tabContent.find(":animated").length == 0 && curTab != tabName ) {
+
+				// Set next tab
+				self.el.nextTab = nextTab;
 
 				// Before callback
 				self.settings.beforeTabSwitch.call(self);

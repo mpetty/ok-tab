@@ -2,7 +2,7 @@
  *	Ok Tab Switcher
  *
  *	@author		Mitchell Petty <https://github.com/mpetty/ok-tab>
- *	@version	v1.3
+ *	@version	v1.4
  */
 (function($) {
 "use strict";
@@ -54,16 +54,31 @@
 		 */
 		Initialize : function() {
 
+			var self = this;
+
 			// Tab nav
 			for(var value in this.el.tabNav) {
-				$('a', this.el.tabNav[value]).off('.okTab').on('click.okTab', $.proxy(this.activate,this));
+				$('a', this.el.tabNav[value]).off('.okTab').on('click.okTab', function(e) {
+					var tabName = $(this).attr('data-tabname');
+					e.preventDefault();
+					self.activate(tabName);
+				});
 			}
 
 			// Next/Prev links
-			$("[" + this.settings.tabDataLink + "]", this.el.tabContent).off(".okTab").on("click.okTab", $.proxy(this.activate, this));
+			$("[" + this.settings.tabDataLink + "]", this.el.tabContent).off(".okTab").on("click.okTab", function(e) {
+				var tabName = $(this).attr('data-tabname');
+				e.preventDefault();
+				self.activate(tabName);
+			});
 
 			// Build it
 			this.build.call(this);
+
+			// Load tab
+			if(this.settings.saveTab) {
+				this.activate(window.location.hash.replace('#tab-',''), true);
+			}
 
 		},
 
@@ -160,21 +175,21 @@
 		 *
 		 *	@param {object} - e
 		 */
-		activate : function(e) {
+		activate : function(tabName, isOnLoad) {
 
 			// Define vars
 			var self = this,
-				$this = $(e.currentTarget),
 				curTab = $('.'+self.settings.activeClass, self.el.tabNav[0]).children().attr('data-tabname'),
 				curTabHeight = self.el.tabContent.height(),
-				tabName = $this.attr('data-tabname'),
 				prevTab = $("> [data-tabname=" + curTab + "]", self.el.tabContent),
 				nextTab = $("> [data-tabname=" + tabName + "]", self.el.tabContent),
 				newHeight = null;
 
-			// Prevent default
-			e.preventDefault();
-			e.stopPropagation();
+			// quit if no tab to switch to
+			if(!nextTab.length) return;
+
+			// Save tab name as hash
+			if(this.settings.saveTab) window.location.hash = encodeURIComponent('tab-'+tabName);
 
 			// Continue only if not animating
 			if( self.el.tabContent.find(":animated").length == 0 && curTab != tabName ) {
@@ -200,24 +215,35 @@
 				}
 
 				// Animate
-				prevTab.animate({'opacity':'hide'}, self.settings.animSpeed, function() {
-
-					newHeight = $('> div[data-tabname='+tabName+']', self.el.tabContent).outerHeight(true);
-
-					self.el.tabContent.height(curTabHeight);
-
-					nextTab.animate({'opacity':'show'}, self.settings.animSpeed, function() {
-						$(this).addClass(self.settings.activeClass);
-						self.settings.afterTabSwitch.call(self);
-						self.tabsViewed.push(tabName);
-						self.el.curTab = $(this);
+				if(isOnLoad) {
+					prevTab.hide(0, function() {
+						nextTab.show(0, function() {
+							$(this).addClass(self.settings.activeClass);
+							self.settings.afterTabSwitch.call(self);
+							self.tabsViewed.push(tabName);
+							self.el.curTab = $(this);
+						});
 					});
+				} else {
+					prevTab.animate({'opacity':'hide'}, self.settings.animSpeed, function() {
 
-					self.el.tabContent.animate({'height':newHeight}, self.settings.animSpeed, function() {
-						self.el.tabContent.css({'height':'auto'});
+						newHeight = $('> div[data-tabname='+tabName+']', self.el.tabContent).outerHeight(true);
+
+						self.el.tabContent.height(curTabHeight);
+
+						nextTab.animate({'opacity':'show'}, self.settings.animSpeed, function() {
+							$(this).addClass(self.settings.activeClass);
+							self.settings.afterTabSwitch.call(self);
+							self.tabsViewed.push(tabName);
+							self.el.curTab = $(this);
+						});
+
+						self.el.tabContent.animate({'height':newHeight}, self.settings.animSpeed, function() {
+							self.el.tabContent.css({'height':'auto'});
+						});
+
 					});
-
-				});
+				}
 
 			}
 
@@ -262,6 +288,7 @@
 		activeClass 			: 'active',			// Tab Active Class
 		animSpeed 				: 200,				// Animation Speed
 		connectedTabNav			: '.tab-nav',		// Used to place tab nav outside of container
+		saveTab					: true,				// Save tab on page refresh by using hashes
 		beforeTabSwitch			: $.noop,
 		afterTabSwitch			: $.noop
 	};

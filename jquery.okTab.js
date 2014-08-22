@@ -198,7 +198,7 @@
 				self.el.nextTab = nextTab;
 
 				// Before callback
-				self.settings.beforeTabSwitch.call(self);
+				if(!isOnLoad) self.settings.beforeTabSwitch.call(self);
 
 				// Set tab name
 				self.tabName = tabName;
@@ -219,7 +219,6 @@
 					prevTab.hide(0, function() {
 						nextTab.show(0, function() {
 							$(this).addClass(self.settings.activeClass);
-							self.settings.afterTabSwitch.call(self);
 							self.tabsViewed.push(tabName);
 							self.el.curTab = $(this);
 						});

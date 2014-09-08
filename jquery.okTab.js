@@ -2,7 +2,7 @@
  *	Ok Tab Switcher
  *
  *	@author		Mitchell Petty <https://github.com/mpetty/ok-tab>
- *	@version	v1.4
+ *	@version	v1.4.1
  */
 (function($) {
 "use strict";
@@ -73,7 +73,7 @@
 			});
 
 			// Build it
-			this.build.call(this);
+			this.build();
 
 			// Load tab
 			if(this.settings.saveTab) {
@@ -179,7 +179,7 @@
 
 			// Define vars
 			var self = this,
-				curTab = $('.'+self.settings.activeClass, self.el.tabNav[0]).children().attr('data-tabname'),
+				curTab = $('.'+self.settings.activeClass, self.el.tabContent).attr('data-tabname'),
 				curTabHeight = self.el.tabContent.height(),
 				prevTab = $("> [data-tabname=" + curTab + "]", self.el.tabContent),
 				nextTab = $("> [data-tabname=" + tabName + "]", self.el.tabContent),

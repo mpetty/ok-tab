@@ -76,7 +76,7 @@
 			this.build();
 
 			// Load tab
-			if(this.settings.saveTab) {
+			if(this.settings.saveTab && window.location.hash !== '') {
 				this.activate(window.location.hash.replace('#tab-',''), true);
 			}
 

@@ -2,84 +2,49 @@
  *	Ok Tab Switcher
  *
  *	@author		Mitchell Petty <https://github.com/mpetty/ok-tab>
- *	@version	v1.4.1
+ *	@version	v1.4.2
  */
 (function($) {
 "use strict";
 
-	var OkTab = function(selector, settings) {
-
-		var self = this;
+	$.OkTab = function(selector, settings) {
 
 		// Set properties
 		this.selector = $(selector);
 		this.settings = settings;
-		this.tabName = null;
-		this.tabsViewed = [];
 
 		// Store elements
-		this.el = {};
-		this.el.tabContent = $('.' + this.settings.tabContentClass, this.selector);
-		this.el.primaryNav = $('.' + this.settings.tabNavClass, this.selector);
-		this.el.secondaryNav = $(this.settings.connectedTabNav);
-		this.el.tabs = $("> div, > .tab", this.el.tabContent);
-		this.el.curTab = null;
-		this.el.prevTab = null;
-		this.el.nextTab = null;
-		this.el.tabNav = [];
-
-		// Build array of all primaryNav navs
-		if(this.el.primaryNav.length) {
-			this.el.primaryNav.each(function() {
-				self.el.tabNav.push($(this));
-			});
-		}
-
-		// Build array of all secondary navs
-		if(this.el.secondaryNav.length) {
-			this.el.secondaryNav.each(function() {
-				self.el.tabNav.push($(this));
-			});
-		}
+		this.el 				= {};
+		this.el.tabContent 		= $('.' + this.settings.tabContentClass, this.selector);
+		this.el.primaryNav 		= $('.' + this.settings.tabNavClass, this.selector);
+		this.el.secondaryNav 	= $(this.settings.connectedTabNav);
+		this.el.tabs 			= $("> ."+this.settings.tabClass+"", this.el.tabContent);
+		this.el.tabNav 			= this.el.primaryNav.add(this.el.secondaryNav);
+		this.el.tabLinks 		= $('a', this.el.tabNav).add($("[" + this.settings.tabDataLink + "]", this.el.tabContent));
+		this.el.curTab 			= null;
+		this.el.prevTab 		= null;
+		this.el.nextTab 		= null;
 
 		// Initialize
-		this.Initialize.call(this);
+		this.build();
+		this.events();
+
+		// Return selector
+		return selector;
 
 	};
 
-	OkTab.prototype = {
+	$.OkTab.prototype = {
 
 		/**
-		 *	Initialize
+		 *	Events
 		 */
-		Initialize : function() {
+		events : function() {
+			this.el.tabLinks.off('.okTab').on('click.okTab', $.proxy(this.onLinkClick, this));
 
-			var self = this;
-
-			// Tab nav
-			for(var value in this.el.tabNav) {
-				$('a', this.el.tabNav[value]).off('.okTab').on('click.okTab', function(e) {
-					var tabName = $(this).attr('data-tabname');
-					e.preventDefault();
-					self.activate(tabName);
-				});
-			}
-
-			// Next/Prev links
-			$("[" + this.settings.tabDataLink + "]", this.el.tabContent).off(".okTab").on("click.okTab", function(e) {
-				var tabName = $(this).attr('data-tabname');
-				e.preventDefault();
-				self.activate(tabName);
-			});
-
-			// Build it
-			this.build();
-
-			// Load tab
 			if(this.settings.saveTab && window.location.hash !== '') {
-				this.activate(window.location.hash, true);
+				this.activate(window.location.hash.replace('#',''), true);
 			}
-
 		},
 
 		/**
@@ -99,33 +64,24 @@
 				this.el.tabs.not(":first").hide();
 			}
 
-			// Set tab nav names
-			for(var value in this.el.tabNav) {
-				if( ! $('.'+this.settings.activeClass, this.el.tabNav[value]).length ) {
-					$('li:first', this.el.tabNav[value]).addClass(this.settings.activeClass);
-				}
-
-				$('a', this.el.tabNav[value]).each(function(i) {
-					var url = $(this).attr('href');
-
-					if( url.indexOf("#") != -1 && url.length >= 2 ) {
-						$(this).attr("data-tabname", $(this).attr('href').replace('#', ''));
-
-						if ($(this).parent().hasClass(self.settings.activeClass)) {
-							self.tabName = $(this).attr("href").replace("#", "");
-						}
-					} else {
-						$(this).attr("data-tabname", i + 1);
-
-						if ($(this).parent().hasClass(self.settings.activeClass)) {
-							self.tabName = i + 1
-						}
-					}
-				});
+			if( ! $('.'+this.settings.activeClass, this.el.tabNav).length ) {
+				$('li:first', this.el.tabNav).addClass(this.settings.activeClass);
 			}
 
+			// Set tab nav names
+			this.el.tabNav.each(function() {
+				$('a', $(this)).each(function(i) {
+					var url = $(this).attr('href');
+					if( url.indexOf("#") !== -1 && url.length >= 2 ) {
+						$(this).attr("data-tabname", $(this).attr('href').replace('#', ''));
+					} else {
+						$(this).attr("data-tabname", i + 1);
+					}
+				});
+			});
+
 			// Set tab names
-			$('> div, > .tab', this.el.tabContent).each(function(i) {
+			this.el.tabs.each(function(i) {
 				var id = $(this).attr('id');
 
 				if( typeof id !== 'undefined' && id.length ) {
@@ -136,7 +92,7 @@
 			});
 
 			// Buttons
-			this.el.tabs.each(function (j) {
+			this.el.tabs.each(function () {
 				var tabLink = $("[" + self.settings.tabDataLink + "]", $(this)),
 					nextLink = $(this).next(),
 					prevLink = $(this).prev();
@@ -146,21 +102,21 @@
 				for (var i = tabLink.length - 1; i >= 0; i--) {
 					var url = $(tabLink[i]).attr("href");
 
-					if (url.indexOf("#") != -1) {
-						$(tabLink[i]).attr("data-tabname", $(tabLink[i]).attr("href").replace("#", ""))
+					if (url.indexOf("#") !== -1) {
+						$(tabLink[i]).attr("data-tabname", $(tabLink[i]).attr("href").replace("#", ""));
 					} else {
 						if ($(tabLink[i]).attr(self.settings.tabDataLink) === "next") {
 							if (nextLink.length) {
-								$(tabLink[i]).attr("data-tabname", nextLink.attr("data-tabname"))
+								$(tabLink[i]).attr("data-tabname", nextLink.attr("data-tabname"));
 							} else {
-								$(tabLink[i]).attr("data-tabname", self.el.tabs.first())
+								$(tabLink[i]).attr("data-tabname", self.el.tabs.first());
 							}
 						} else {
 							if ($(tabLink[i]).attr(self.settings.tabDataLink) === "prev") {
 								if (prevLink.length) {
-									$(tabLink[i]).attr("data-tabname", prevLink.attr("data-tabname"))
+									$(tabLink[i]).attr("data-tabname", prevLink.attr("data-tabname"));
 								} else {
-									$(tabLink[i]).attr("data-tabname", self.el.tabs.last())
+									$(tabLink[i]).attr("data-tabname", self.el.tabs.last());
 								}
 							}
 						}
@@ -171,9 +127,21 @@
 		},
 
 		/**
-		 *	Events
+		 *	Link Click
 		 *
 		 *	@param {object} - e
+		 */
+		onLinkClick : function(e) {
+			var tabName = $(e.currentTarget).attr('data-tabname');
+			e.preventDefault();
+			this.activate(tabName);
+		},
+
+		/**
+		 *	Activate
+		 *
+		 *	@param {string} - tabName
+		 *	@param {boolean} - isOnLoad
 		 */
 		activate : function(tabName, isOnLoad) {
 
@@ -192,7 +160,7 @@
 			if(this.settings.saveTab) window.location.hash = encodeURIComponent(tabName);
 
 			// Continue only if not animating
-			if( self.el.tabContent.find(":animated").length == 0 && curTab != tabName ) {
+			if( self.el.tabContent.find(":animated").length === 0 && curTab !== tabName ) {
 
 				// Set next tab
 				self.el.nextTab = nextTab;
@@ -200,26 +168,20 @@
 				// Before callback
 				if(!isOnLoad) self.settings.beforeTabSwitch.call(self);
 
-				// Set tab name
-				self.tabName = tabName;
-
 				// Toggle active tab
 				$("li", self.el.tabNav).removeClass(self.settings.activeClass);
 				self.el.tabs.removeClass(self.settings.activeClass);
 				self.el.prevTab = prevTab;
 
 				// Loop each tab nav
-				for(var value in this.el.tabNav) {
-					$('li', this.el.tabNav[value]).removeClass(self.settings.activeClass);
-					this.el.tabNav[value].find('[data-tabname="'+tabName+'"]').parent().addClass(self.settings.activeClass);
-				}
+				$('li', this.el.tabNav).removeClass(self.settings.activeClass);
+				this.el.tabNav.find('[data-tabname="'+tabName+'"]').parent().addClass(self.settings.activeClass);
 
 				// Animate
 				if(isOnLoad) {
 					prevTab.hide(0, function() {
 						nextTab.show(0, function() {
 							$(this).addClass(self.settings.activeClass);
-							self.tabsViewed.push(tabName);
 							self.el.curTab = $(this);
 						});
 					});
@@ -233,7 +195,6 @@
 						nextTab.animate({'opacity':'show'}, self.settings.animSpeed, function() {
 							$(this).addClass(self.settings.activeClass);
 							self.settings.afterTabSwitch.call(self);
-							self.tabsViewed.push(tabName);
 							self.el.curTab = $(this);
 						});
 
@@ -254,20 +215,18 @@
 	 */
 	$.fn.okTab = function(options) {
 		return this.each(function() {
-
-			// Set vars
-			var settings = $.extend(true, {}, $.fn.okTab.defaults, options), okTab;
+			var settings = $.extend(true, {}, $.fn.okTab.defaults, options);
 
 			// If called on document, intialize using data attr
 			if(this === document) {
 				$('['+settings.tabDataAttr+']').each(function() {
 					settings.connectedTabNav = '[data-tabnav="'+$(this).attr(settings.tabDataAttr)+'"]';
-					okTab = new OkTab(this, settings);
+					new $.OkTab(this, settings);
 				});
 
 			// Else call on element
 			} else {
-				okTab = new OkTab(this, settings);
+				new $.OkTab(this, settings);
 			}
 
 			// Return for chaining
@@ -282,12 +241,13 @@
 	$.fn.okTab.defaults = {
 		tabDataLink 			: "data-tabs-link",	// Tab link
 		tabDataAttr				: 'data-tabs',		// Used to init tabs when initialized on document
+		tabClass 				: 'tab',			// Tab Class
 		tabNavClass 			: 'tabs',			// Tab Nav ID/Class
 		tabContentClass 		: 'tabs-content',	// Tab Content ID / Class
 		activeClass 			: 'active',			// Tab Active Class
-		animSpeed 				: 200,				// Animation Speed
 		connectedTabNav			: '.tab-nav',		// Used to place tab nav outside of container
 		saveTab					: true,				// Save tab on page refresh by using hashes
+		animSpeed 				: 200,				// Animation Speed
 		beforeTabSwitch			: $.noop,
 		afterTabSwitch			: $.noop
 	};

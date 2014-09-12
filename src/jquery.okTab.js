@@ -77,7 +77,7 @@
 
 			// Load tab
 			if(this.settings.saveTab && window.location.hash !== '') {
-				this.activate(window.location.hash.replace('#tab-',''), true);
+				this.activate(window.location.hash, true);
 			}
 
 		},
@@ -189,7 +189,7 @@
 			if(!nextTab.length) return;
 
 			// Save tab name as hash
-			if(this.settings.saveTab) window.location.hash = encodeURIComponent('tab-'+tabName);
+			if(this.settings.saveTab) window.location.hash = encodeURIComponent(tabName);
 
 			// Continue only if not animating
 			if( self.el.tabContent.find(":animated").length == 0 && curTab != tabName ) {

@@ -12,6 +12,7 @@
 		// Set properties
 		this.selector = $(selector);
 		this.settings = settings;
+		this.tabName = null;
 
 		// Store elements
 		this.el 				= {};
@@ -72,10 +73,19 @@
 			this.el.tabNav.each(function() {
 				$('a', $(this)).each(function(i) {
 					var url = $(this).attr('href');
+
 					if( url.indexOf("#") !== -1 && url.length >= 2 ) {
 						$(this).attr("data-tabname", $(this).attr('href').replace('#', ''));
+
+						if ($(this).parent().hasClass(self.settings.activeClass)) {
+							self.tabName = $(this).attr("href").replace("#", "");
+						}
 					} else {
 						$(this).attr("data-tabname", i + 1);
+
+						if ($(this).parent().hasClass(self.settings.activeClass)) {
+							self.tabName = i + 1
+						}
 					}
 				});
 			});
@@ -167,6 +177,9 @@
 
 				// Before callback
 				if(!isOnLoad) self.settings.beforeTabSwitch.call(self);
+
+				// Set tab name
+				self.tabName = tabName;
 
 				// Toggle active tab
 				$("li", self.el.tabNav).removeClass(self.settings.activeClass);

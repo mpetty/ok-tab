@@ -187,8 +187,8 @@
 				self.el.prevTab = prevTab;
 
 				// Loop each tab nav
-				$('li', this.el.tabNav).removeClass(self.settings.activeClass);
-				this.el.tabNav.find('[data-tabname="'+tabName+'"]').parent().addClass(self.settings.activeClass);
+				$('li', self.el.tabNav).removeClass(self.settings.activeClass);
+				self.el.tabNav.find('[data-tabname="'+tabName+'"]').parent().addClass(self.settings.activeClass);
 
 				// Animate
 				if(isOnLoad) {

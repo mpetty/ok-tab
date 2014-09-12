@@ -1,4 +1,4 @@
-/*
+/*!
  *	Ok Tab Switcher
  *
  *	@author		Mitchell Petty <https://github.com/mpetty/ok-tab>

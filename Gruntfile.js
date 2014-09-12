@@ -6,8 +6,7 @@ module.exports = function(grunt) {
 		concat: {
 			dist: {
 				files : {
-					'jquery.fillSelect.min.js': ['src/jquery.fillSelect.js'],
-					'jquery.fillSelect.methods.min.js': ['src/jquery.fillSelect.methods.js'],
+					'jquery.okTab.min.js': ['src/jquery.okTab.js'],
 				}
 			}
 		},
@@ -15,8 +14,7 @@ module.exports = function(grunt) {
 		uglify: {
 			dist: {
 				files: {
-					'jquery.fillSelect.min.js' : ['jquery.fillSelect.min.js'],
-					'jquery.fillSelect.methods.min.js' : ['jquery.fillSelect.methods.min.js']
+					'jquery.okTab.min.js' : ['jquery.okTab.min.js']
 				},
 				options: {
 					preserveComments : 'some'
@@ -53,6 +51,17 @@ module.exports = function(grunt) {
 			}
 		},
 
+		sass: {
+			dist: {
+				options: {
+					style: 'compressed'
+				},
+				files: {
+					'okTab.min.css': 'src/okTab.scss'
+				}
+			}
+		},
+
 		watch: {
 			jshint: {
 				files: [
@@ -62,6 +71,14 @@ module.exports = function(grunt) {
 					'jshint'
 				]
 			},
+			concat: {
+				files: [
+					'src/*.js'
+				],
+				tasks: [
+					'concat'
+				]
+			},
 			uglify: {
 				files: [
 					'src/*.js',
@@ -69,6 +86,15 @@ module.exports = function(grunt) {
 				tasks: [
 					'uglify'
 				]
+			},
+			css: {
+				files: [
+					'src/*.scss'
+				],
+				tasks: ['sass'],
+				options: {
+					spawn: false,
+				}
 			}
 		}
 
@@ -77,7 +103,13 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
+	grunt.loadNpmTasks('grunt-contrib-sass');
 	grunt.loadNpmTasks('grunt-contrib-watch');
-	grunt.registerTask('default', ['concat', 'uglify']);
+
+	grunt.registerTask('default', [
+		'sass',
+		'concat',
+		'uglify'
+	]);
 
 };

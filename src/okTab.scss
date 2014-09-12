@@ -1,0 +1,120 @@
+/**
+ * OkTab styles
+ *
+ * 	_Nav
+ * 	_Content
+ *
+ */
+
+$background: #fff;
+$linkColor: #7f8080;
+$borderColor: #b2b3b0;
+
+/*
+ * ================================
+ * 	_Nav
+ * ================================
+ */
+
+	.tab-nav{
+		float:left;
+		clear:both;
+		position:relative;
+		bottom:-1px;
+		width:100%;
+		height:38px;
+
+		ul{
+			margin:0;
+			padding:0;
+			list-style:none;
+			width:100%;
+		}
+
+		li{
+			float:left;
+			margin:0;
+			padding:0;
+			position:relative;
+		}
+
+		 a{
+			display:block;
+			background: $background;
+			border:1px solid $borderColor;
+			padding:10px 25px;
+			margin:0 8px;
+			position:relative;
+			font-size:16px;
+			color:$linkColor;
+			font-weight:bold;
+			-webkit-box-shadow:  0px 0px 4px 1px $borderColor;
+			-moz-box-shadow:  0px 0px 4px 1px $borderColor;
+			box-shadow:  0px 0px 4px 0 $borderColor;
+			-moz-border-radius: 5px 5px 0px 0px;
+			-webkit-border-radius: 5px 5px 0px 0px;
+			border-radius: 5px 5px 0px 0px;
+		}
+
+		a:hover,
+		a:focus{
+			background:#eaeaea;
+			padding-bottom:15px;
+			margin-top:-5px;
+		}
+
+		.active{
+			bottom:-1px;
+			z-index:5;
+		}
+
+		.active a{
+			border-bottom:none;
+			padding-bottom:15px;
+			margin-top:-5px;
+			-webkit-box-shadow:none;
+			-moz-box-shadow:none;
+			box-shadow: none;
+		}
+
+		.active a:hover,
+		.active a:focus{
+			background:$background;
+		}
+	}
+
+/*
+ * ================================
+ * 	_Content
+ * ================================
+ */
+
+	.tab-content{
+		background:$background;
+		border:1px solid $borderColor;
+		float:left;
+		clear:both;
+		position:relative;
+		width:94%;
+		padding:0 3%;
+		min-height:100px;
+		-webkit-box-shadow:  0px 0px 4px 1px $borderColor0;
+		-moz-box-shadow:  0px 0px 4px 1px $borderColor;
+		box-shadow:  0px 0px 4px 0 $borderColor;
+		-moz-border-radius-topleft: 5px;
+		-moz-border-radius-topright: 5px;
+		-moz-border-radius-bottomright: 5px;
+		-moz-border-radius-bottomleft: 0px;
+		-webkit-border-radius: 5px 5px 5px 0px;
+		border-radius: 5px 5px 5px 0px;
+
+		.tab{
+			position:relative;
+			float:left;
+			width:100%;
+			clear:both;
+			padding:20px 0 20px 0;
+			margin:20px 0 0 0;
+			min-height:100px;
+		}
+	}

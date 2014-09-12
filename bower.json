@@ -1,0 +1,23 @@
+{
+	"name": "OkTab",
+	"version": "1.4",
+	"license": "MIT",
+	"private": true,
+	"ignore": [
+		"**/.*",
+		"node_modules",
+		"bower_components",
+		"demo",
+		"src",
+		"*.json",
+		"Gruntfile.js",
+		"readme.md"
+	],
+  	"main": [
+  		"jquery.okTab.min.js",
+  		"okTab.min.css"
+  	],
+	"dependencies": {
+		"jquery": ">=1.7.0"
+	}
+}

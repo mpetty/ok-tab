@@ -170,7 +170,7 @@
 			if(this.settings.saveTab) window.location.hash = encodeURIComponent(tabName);
 
 			// Continue only if not animating
-			if( self.el.tabContent.find(":animated").length === 0 && curTab !== tabName ) {
+			if( self.el.tabContent.find("."+this.settings.tabClass+":animated").length === 0 && curTab !== tabName ) {
 
 				// Set next tab
 				self.el.nextTab = nextTab;

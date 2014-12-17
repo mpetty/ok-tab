@@ -84,7 +84,7 @@
 						$(this).attr("data-tabname", i + 1);
 
 						if ($(this).parent().hasClass(self.settings.activeClass)) {
-							self.tabName = i + 1
+							self.tabName = i + 1;
 						}
 					}
 				});
@@ -213,6 +213,10 @@
 
 						self.el.tabContent.animate({'height':newHeight}, self.settings.animSpeed, function() {
 							self.el.tabContent.css({'height':'auto'});
+
+							$('html, body').animate({
+								scrollTop: nextTab.offset().top
+							}, 200);
 						});
 
 					});

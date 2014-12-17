@@ -26,6 +26,9 @@
 		this.el.prevTab 		= null;
 		this.el.nextTab 		= null;
 
+		// Check for history
+		if (!window.history || !window.history.pushState) this.settings.saveTab = false;
+
 		// Initialize
 		this.build();
 		this.events();
@@ -37,18 +40,15 @@
 
 	$.OkTab.prototype = {
 
-		refreshEl : function() {
-
-		},
-
 		/**
 		 *	Events
 		 */
 		events : function() {
 			this.el.tabLinks.off('.okTab').on('click.okTab', $.proxy(this.onLinkClick, this));
 
-			if(this.settings.saveTab && window.location.hash !== '') {
-				this.activate(window.location.hash.replace('#',''), true);
+			if(this.settings.saveTab) {
+				$(window).off('popstate.okTab').on('popstate.okTab', $.proxy(this.onHashChange, this));
+				if(window.location.hash !== '') this.activate(window.location.hash.replace('#',''), true);
 			}
 		},
 
@@ -141,6 +141,13 @@
 		},
 
 		/**
+		 *	Hash Change
+		 */
+		onHashChange : function(e) {
+			if(window.location.hash !== '') this.activate(window.location.hash.replace('#',''), true);
+		},
+
+		/**
 		 *	Link Click
 		 *
 		 *	@param {object} - e
@@ -150,7 +157,6 @@
 			e.preventDefault();
 			e.stopPropagation();
 			this.activate(tabName);
-			return false;
 		},
 
 		/**
@@ -173,7 +179,7 @@
 			if(!nextTab.length) return;
 
 			// Save tab name as hash
-			if(this.settings.saveTab) window.location.hash = encodeURIComponent(tabName);
+			if(this.settings.saveTab && !isOnLoad) history.pushState({id: 'OkTab'}, null, '#'+encodeURIComponent(tabName));
 
 			// Continue only if not animating
 			if( self.el.tabContent.find("."+this.settings.tabClass+":animated").length === 0 && curTab !== tabName ) {
@@ -208,6 +214,12 @@
 					newHeight = $('> div[data-tabname='+tabName+']', self.el.tabContent).outerHeight(true);
 					self.el.tabContent.height(curTabHeight);
 
+					if(self.settings.scrollTop) {
+						$('html, body').animate({
+							scrollTop: self.el.tabContent.offset().top - self.settings.scrollOffset
+						}, 200);
+					}
+
 					prevTab.animate({'opacity':'hide'}, self.settings.animSpeed, function() {
 
 						nextTab.animate({'opacity':'show'}, self.settings.animSpeed, function() {
@@ -218,10 +230,6 @@
 
 						self.el.tabContent.animate({'height':newHeight}, self.settings.animSpeed, function() {
 							self.el.tabContent.css({'height':'auto'});
-
-							$('html, body').animate({
-								scrollTop: nextTab.offset().top
-							}, 200);
 						});
 
 					});
@@ -270,6 +278,8 @@
 		connectedTabNav			: '.tab-nav',		// Used to place tab nav outside of container
 		saveTab					: true,				// Save tab on page refresh by using hashes
 		animSpeed 				: 200,				// Animation Speed
+		scrollTop	 			: true,				// Scroll to tab
+		scrollOffset 			: 100,				// Scroll Offset
 		beforeTabSwitch			: $.noop,
 		afterTabSwitch			: $.noop
 	};

@@ -37,6 +37,10 @@
 
 	$.OkTab.prototype = {
 
+		refreshEl : function() {
+
+		},
+
 		/**
 		 *	Events
 		 */
@@ -144,7 +148,9 @@
 		onLinkClick : function(e) {
 			var tabName = $(e.currentTarget).attr('data-tabname');
 			e.preventDefault();
+			e.stopPropagation();
 			this.activate(tabName);
+			return false;
 		},
 
 		/**
@@ -199,11 +205,10 @@
 						});
 					});
 				} else {
+					newHeight = $('> div[data-tabname='+tabName+']', self.el.tabContent).outerHeight(true);
+					self.el.tabContent.height(curTabHeight);
+
 					prevTab.animate({'opacity':'hide'}, self.settings.animSpeed, function() {
-
-						newHeight = $('> div[data-tabname='+tabName+']', self.el.tabContent).outerHeight(true);
-
-						self.el.tabContent.height(curTabHeight);
 
 						nextTab.animate({'opacity':'show'}, self.settings.animSpeed, function() {
 							$(this).addClass(self.settings.activeClass);

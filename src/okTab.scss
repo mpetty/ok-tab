@@ -16,13 +16,17 @@ $borderColor: #b2b3b0;
  * ================================
  */
 
+ 	.tab-container {
+ 	}
+
 	.tab-nav{
-		float:left;
 		clear:both;
 		position:relative;
 		bottom:-1px;
 		width:100%;
 		height:38px;
+		padding: 5px 0 0 0;
+		overflow: hidden;
 
 		ul{
 			margin:0;
@@ -92,7 +96,7 @@ $borderColor: #b2b3b0;
 	.tab-content{
 		background:$background;
 		border:1px solid $borderColor;
-		float:left;
+		overflow: hidden;
 		clear:both;
 		position:relative;
 		width:94%;

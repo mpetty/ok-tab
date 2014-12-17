@@ -214,7 +214,7 @@
 					newHeight = $('> div[data-tabname='+tabName+']', self.el.tabContent).outerHeight(true);
 					self.el.tabContent.height(curTabHeight);
 
-					if(self.settings.scrollTop) {
+					if( self.settings.scrollTop && $(window).scrollTop() > self.el.tabContent.offset().top ) {
 						$('html, body').animate({
 							scrollTop: self.el.tabContent.offset().top - self.settings.scrollOffset
 						}, 200);
@@ -279,7 +279,7 @@
 		saveTab					: true,				// Save tab on page refresh by using hashes
 		animSpeed 				: 200,				// Animation Speed
 		scrollTop	 			: true,				// Scroll to tab
-		scrollOffset 			: 100,				// Scroll Offset
+		scrollOffset 			: 0,				// Scroll Offset
 		beforeTabSwitch			: $.noop,
 		afterTabSwitch			: $.noop
 	};

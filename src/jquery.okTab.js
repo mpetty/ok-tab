@@ -2,7 +2,7 @@
  *	Ok Tab Switcher
  *
  *	@author		Mitchell Petty <https://github.com/mpetty/ok-tab>
- *	@version	v1.4.2
+ *	@version	v1.4.3
  */
 (function($) {
 "use strict";

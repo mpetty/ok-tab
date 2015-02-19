@@ -60,8 +60,8 @@
 			var self = this;
 
 			// Set active tab
-			if( $('.'+this.settings.activeClass, this.el.tabContent).length ) {
-				this.el.curTab = this.el.tabs.filter("." + this.settings.activeClass);
+			if( $('.'+this.settings.tabClass+'.'+this.settings.activeClass, this.el.tabContent).length ) {
+				this.el.curTab = this.el.tabs.filter('.'+this.settings.tabClass+'.' + this.settings.activeClass);
 				this.el.tabs.not(this.el.curTab).hide();
 			} else {
 				this.el.curTab = this.el.tabs.first();
@@ -69,7 +69,7 @@
 				this.el.tabs.not(":first").hide();
 			}
 
-			if( ! $('.'+this.settings.activeClass, this.el.tabNav).length ) {
+			if( ! $('li.'+this.settings.activeClass, this.el.tabNav).length ) {
 				$('li:first', this.el.tabNav).addClass(this.settings.activeClass);
 			}
 

@@ -169,7 +169,7 @@
 
 			// Define vars
 			var self = this,
-				curTab = $('.'+self.settings.activeClass, self.el.tabContent).attr('data-tabname'),
+				curTab = $('.'+self.settings.tabClass+'.'+self.settings.activeClass, self.el.tabContent).attr('data-tabname'),
 				curTabHeight = self.el.tabContent.height(),
 				prevTab = $("> [data-tabname=" + curTab + "]", self.el.tabContent),
 				nextTab = $("> [data-tabname=" + tabName + "]", self.el.tabContent),

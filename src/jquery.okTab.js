@@ -2,7 +2,7 @@
  *	Ok Tab Switcher
  *
  *	@author		Mitchell Petty <https://github.com/mpetty/ok-tab>
- *	@version	v1.4.4
+ *	@version	v1.4.5
  */
 (function($) {
 "use strict";
@@ -208,6 +208,7 @@
 						nextTab.show(0, function() {
 							$(this).addClass(self.settings.activeClass);
 							self.el.curTab = $(this);
+							self.settings.afterTabSwitch.call(self);
 						});
 					});
 				} else {
@@ -224,8 +225,8 @@
 
 						nextTab.animate({'opacity':'show'}, self.settings.animSpeed, function() {
 							$(this).addClass(self.settings.activeClass);
-							self.settings.afterTabSwitch.call(self);
 							self.el.curTab = $(this);
+							self.settings.afterTabSwitch.call(self);
 						});
 
 						self.el.tabContent.animate({'height':newHeight}, self.settings.animSpeed, function() {

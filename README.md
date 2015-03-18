@@ -1,4 +1,4 @@
-# OkTab v1.4.6
+# Tabs v1.4.6
 
 Library for creating tabs.
 

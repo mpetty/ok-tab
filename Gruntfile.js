@@ -54,7 +54,11 @@ module.exports = function(grunt) {
 		sass: {
 			dist: {
 				options: {
-					style: 'compressed'
+					style: 'compressed',
+					sourcemap: 'none',
+					compass: false,
+					lineNumbers: true,
+					update: true
 				},
 				files: {
 					'okTab.min.css': 'src/okTab.scss'

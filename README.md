@@ -26,7 +26,7 @@ $(document).okTab(options);
 ## Options available
 
 ```javascript
-tabDataLink             : "data-tabs-link",     // Tab link
+tabDataLink             : 'data-tabs-link',     // Tab link
 tabDataAttr             : 'data-tabs',          // Used to init tabs when initialized on document
 tabClass                : 'tab',                // Tab Class
 tabNavClass             : 'tabs',               // Tab Nav ID/Class

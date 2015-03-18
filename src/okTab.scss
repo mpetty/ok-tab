@@ -1,5 +1,5 @@
 /**
- * OkTab styles
+ * 	OkTab styles
  *
  * 	_Nav
  * 	_Content
@@ -15,9 +15,6 @@ $borderColor: #b2b3b0;
  * 	_Nav
  * ================================
  */
-
- 	.tab-container {
- 	}
 
 	.tab-nav{
 		clear:both;
@@ -42,7 +39,7 @@ $borderColor: #b2b3b0;
 			position:relative;
 		}
 
-		 a{
+		a{
 			display:block;
 			background: $background;
 			border:1px solid $borderColor;
@@ -58,13 +55,13 @@ $borderColor: #b2b3b0;
 			-moz-border-radius: 5px 5px 0px 0px;
 			-webkit-border-radius: 5px 5px 0px 0px;
 			border-radius: 5px 5px 0px 0px;
-		}
 
-		a:hover,
-		a:focus{
-			background:#eaeaea;
-			padding-bottom:15px;
-			margin-top:-5px;
+			&:hover,
+			&:focus{
+				background:#eaeaea;
+				padding-bottom:15px;
+				margin-top:-5px;
+			}
 		}
 
 		.active{
@@ -79,11 +76,11 @@ $borderColor: #b2b3b0;
 			-webkit-box-shadow:none;
 			-moz-box-shadow:none;
 			box-shadow: none;
-		}
 
-		.active a:hover,
-		.active a:focus{
-			background:$background;
+			&:hover,
+			&:focus{
+				background:$background;
+			}
 		}
 	}
 

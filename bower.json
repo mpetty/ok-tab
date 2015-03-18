@@ -1,8 +1,12 @@
 {
-	"name": "OkTab",
-	"version": "1.4.5",
+	"name": "tabs",
+
+	"version": "1.4.6",
+
 	"license": "MIT",
+
 	"private": true,
+
 	"ignore": [
 		"**/.*",
 		"node_modules",
@@ -13,10 +17,12 @@
 		"Gruntfile.js",
 		"readme.md"
 	],
+
   	"main": [
-  		"jquery.okTab.min.js",
-  		"okTab.min.css"
+  		"jquery.tabs.min.js",
+  		"tabs.min.css"
   	],
+
 	"dependencies": {
 		"jquery": ">=1.7.0"
 	}

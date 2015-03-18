@@ -1,4 +1,4 @@
-# OkTab v1.4.5
+# OkTab v1.4.6
 
 Library for creating tabs.
 
@@ -12,7 +12,7 @@ Add to your project's `bower.json` file, like:
   "version": "1.0.0",
   "dependencies": {
     "jquery": "1.11.0",
-    "fillselect": "git@github.com:mpetty/ok-tab"
+    "fillselect": "git@github.com:mpetty/tabs"
   }
 }
 ```
@@ -20,7 +20,8 @@ Add to your project's `bower.json` file, like:
 ## Usage
 
 ```javascript
-$(document).okTab(options);
+$.tabs(options);
+$('.tab').tabs(options);
 ```
 
 ## Options available

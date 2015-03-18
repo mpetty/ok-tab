@@ -1,13 +1,13 @@
 /*!
- *	Ok Tab Switcher
+ *	Tab Switcher
  *
- *	@author		Mitchell Petty <https://github.com/mpetty/ok-tab>
- *	@version	v1.4.5
+ *	@author		Mitchell Petty <https://github.com/mpetty/tabs>
+ *	@version	v1.4.6
  */
 (function($) {
 "use strict";
 
-	$.OkTab = function(selector, settings) {
+	var Tabs = function(selector, settings) {
 
 		// Set properties
 		this.selector = $(selector);
@@ -38,16 +38,15 @@
 
 	};
 
-	$.OkTab.prototype = {
-
+	Tabs.prototype = {
 		/**
 		 *	Events
 		 */
 		events : function() {
-			this.el.tabLinks.off('.okTab').on('click.okTab', $.proxy(this.onLinkClick, this));
+			this.el.tabLinks.off('.tabs').on('click.tabs', $.proxy(this.onLinkClick, this));
 
 			if(this.settings.saveTab) {
-				$(window).off('popstate.okTab').on('popstate.okTab', $.proxy(this.onHashChange, this));
+				$(window).off('popstate.tabs').on('popstate.tabs', $.proxy(this.onHashChange, this));
 				if(window.location.hash !== '') this.activate(window.location.hash.replace('#',''), true);
 			}
 		},
@@ -166,7 +165,6 @@
 		 *	@param {boolean} - isOnLoad
 		 */
 		activate : function(tabName, isOnLoad) {
-
 			// Define vars
 			var self = this,
 				curTab = $('.'+self.settings.tabClass+'.'+self.settings.activeClass, self.el.tabContent).attr('data-tabname'),
@@ -179,7 +177,7 @@
 			if(!nextTab.length) return;
 
 			// Save tab name as hash
-			if(this.settings.saveTab && !isOnLoad) history.pushState({id: 'OkTab'}, null, '#'+encodeURIComponent(tabName));
+			if(this.settings.saveTab && !isOnLoad) history.pushState({id: 'tabs'}, null, '#'+encodeURIComponent(tabName));
 
 			// Continue only if not animating
 			if( self.el.tabContent.find("."+this.settings.tabClass+":animated").length === 0 && curTab !== tabName ) {
@@ -237,27 +235,32 @@
 				}
 
 			}
-
 		}
 	};
 
 	/**
 	 *	Initialize Plugin
 	 */
-	$.fn.okTab = function(options) {
+	$.tabs = function(options) {
+		var settings = $.extend(true, {}, $.fn.tabs.defaults, options);
+
+		$('['+settings.tabDataAttr+']').each(function() {
+			settings.connectedTabNav = '[data-tabnav="'+$(this).attr(settings.tabDataAttr)+'"]';
+			new Tabs(this, settings);
+		});
+	};
+
+	$.fn.tabs = function(options) {
 		return this.each(function() {
-			var settings = $.extend(true, {}, $.fn.okTab.defaults, options);
+			var settings = $.extend(true, {}, $.fn.tabs.defaults, options);
 
 			// If called on document, intialize using data attr
 			if(this === document) {
-				$('['+settings.tabDataAttr+']').each(function() {
-					settings.connectedTabNav = '[data-tabnav="'+$(this).attr(settings.tabDataAttr)+'"]';
-					new $.OkTab(this, settings);
-				});
+				$.tabs(options);
 
 			// Else call on element
 			} else {
-				new $.OkTab(this, settings);
+				new Tabs(this, settings);
 			}
 
 			// Return for chaining
@@ -269,7 +272,7 @@
 	/**
 	 *	Plugin Defaults
 	 */
-	$.fn.okTab.defaults = {
+	$.fn.tabs.defaults = {
 		tabDataLink 			: "data-tabs-link",	// Tab link
 		tabDataAttr				: 'data-tabs',		// Used to init tabs when initialized on document
 		tabClass 				: 'tab',			// Tab Class

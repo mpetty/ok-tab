@@ -1,11 +1,15 @@
 {
-	"name": "ok-tab",
-	"version": "1.4.5",
+	"name": "tabs",
+
+	"version": "1.4.6",
+
 	"description": "",
+
 	"repository": {
 		"type": "git",
-		"url": "git@github.com:mpetty/ok-tab.git"
+		"url": "git@github.com:mpetty/tabs.git"
 	},
+
 	"devDependencies": {
 		"grunt": ">=0.4.1",
 		"grunt-contrib-concat": ">=0.3.0",

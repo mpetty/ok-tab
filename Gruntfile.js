@@ -6,7 +6,7 @@ module.exports = function(grunt) {
 		concat: {
 			dist: {
 				files : {
-					'jquery.okTab.min.js': ['src/jquery.okTab.js'],
+					'jquery.tabs.min.js': ['src/jquery.tabs.js'],
 				}
 			}
 		},
@@ -14,7 +14,7 @@ module.exports = function(grunt) {
 		uglify: {
 			dist: {
 				files: {
-					'jquery.okTab.min.js' : ['jquery.okTab.min.js']
+					'jquery.tabs.min.js' : ['jquery.tabs.min.js']
 				},
 				options: {
 					preserveComments : 'some'
@@ -61,7 +61,7 @@ module.exports = function(grunt) {
 					update: true
 				},
 				files: {
-					'okTab.min.css': 'src/okTab.scss'
+					'tabs.min.css': 'src/tabs.scss'
 				}
 			}
 		},

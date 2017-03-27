@@ -23,7 +23,7 @@
 		this.el.secondaryNav 	= $(this.settings.connectedTabNav);
 		this.el.tabs 			= $("> ."+this.settings.tabClass+"", this.el.tabContent);
 		this.el.tabNav 			= this.el.primaryNav.add(this.el.secondaryNav);
-		this.el.tabLinks 		= $('a', this.el.tabNav).add($("[" + this.settings.tabDataLink + "="+name+"]"));
+		this.el.tabLinks 		= $('a', this.el.tabNav).add($("[" + this.settings.tabDataLink + "='"+name+"']"));
 		this.el.curTab 			= null;
 		this.el.prevTab 		= null;
 		this.el.nextTab 		= null;

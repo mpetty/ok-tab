@@ -1,4 +1,4 @@
-# Tabs v1.4.6
+# Tabs v1.4.7
 
 Library for creating tabs.
 

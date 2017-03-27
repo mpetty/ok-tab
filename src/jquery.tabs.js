@@ -2,7 +2,7 @@
  *	Tab Switcher
  *
  *	@author		Mitchell Petty <https://github.com/mpetty/tabs>
- *	@version	v1.4.6
+ *	@version	v1.4.7
  */
 (function($) {
 "use strict";
